@@ -3,130 +3,430 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="David Uzor — software engineer. A curriculum vitae, bound as a book." />
     <link rel="stylesheet" href="css/style.css" />
     <title>David Uzor</title>
   </head>
   <body>
-    <nav>
-      <span class="nav-name">David Uzor</span>
-      <a href="contact.html">Contact David</a>
-    </nav>
+    <!-- Paper grain is a tiled data-URI in the stylesheet. This filter is
+         here because it roughens the torn ends of the tape on the cover. -->
+    <svg class="svg-defs" aria-hidden="true" focusable="false">
+      <defs>
+        <!-- The portrait runs green: measured across the frame, G sits ~16%
+             above R and B, which are equal to each other. Lifting R and B
+             and easing G back puts the greys neutral again. -->
+        <filter id="neutralise" color-interpolation-filters="sRGB">
+          <feColorMatrix
+            type="matrix"
+            values="1.08 0 0 0 0
+                    0 0.93 0 0 0
+                    0 0 1.08 0 0
+                    0 0 0 1 0"
+          />
+        </filter>
 
-    <header>
-      <h1>David Uzor</h1>
-      <img src="images/img_avatar.jpg" alt="Portrait of David Uzor" style="width: 140px; height: 140px; object-fit: cover;" />
-      <p class="address" style="font-size: 0.95rem; margin-top: 1rem; letter-spacing: 0.02em;">
-        <span>📍 210 S. Jackson St, Athens, GA 30602</span>
-        <span>📞 (706) 254-5344</span>
-        <span>✉️ duzor144@gmail.com</span>
-      </p>
-      <p class="tagline" style="font-size: 1.15rem; font-style: italic; margin-top: 0.75rem;">
-        Software engineer that loves building things.
-      </p>
-    </header>
+        <filter id="torn" x="-12%" y="-40%" width="124%" height="180%">
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.7 0.16"
+            numOctaves="3"
+            seed="11"
+            result="n"
+          />
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="n"
+            scale="5"
+            xChannelSelector="R"
+            yChannelSelector="G"
+          />
+        </filter>
+      </defs>
+    </svg>
 
-    <section style="max-width: 960px; margin: 2rem auto; padding: 0 1.5rem;">
-      <h3>Education</h3>
-      <dl style="grid-template-columns: 220px 1fr; row-gap: 0.75rem; column-gap: 1rem;">
-        <dt><strong>University of Georgia</strong></dt>
-        <dd>Bachelor of Science in Computer Science · Expected May 2027 · GPA: 3.56</dd>
+    <p class="topnote">Click bottom right to flip page</p>
 
-        <dt><strong>Relevant Coursework</strong></dt>
-        <dd>Data Structures, Algorithms, Operating Systems, Databases, Web Programming, Computer Networks, Linear Algebra</dd>
-      </dl>
-    </section>
+    <main class="stage">
+      <h1 class="sr-only">David Uzor — Curriculum Vitae</h1>
 
-    <hr />
+      <div class="book" id="book">
+        <div class="book__edges book__edges--left" aria-hidden="true"></div>
+        <div class="book__edges book__edges--right" aria-hidden="true"></div>
 
-    <section style="max-width: 960px; margin: 2rem auto; padding: 0 1.5rem;">
-      <h3>Skills</h3>
-      <ul style="list-style: square inside; padding-left: 1rem; line-height: 1.8;">
-        <li>Java and the Spring Framework</li>
-        <li>TypeScript, JavaScript, Svelte/SvelteKit, and React</li>
-        <li>HTML and CSS</li>
-        <li>Python, C, C#/.NET, Rust, and Kotlin</li>
-        <li>Git, GitHub, Docker, and AWS (VPC, EC2, ECS, S3)</li>
-        <li>Blender (3D graphics software)</li>
-      </ul>
-    </section>
+        <!-- ============ LEAF 0 : cover / contents ============ -->
+        <article class="leaf" data-leaf="0">
+          <section class="face face--front page page--board page--cover">
+            <p class="cover__kicker">Curriculum Vitae</p>
 
-    <hr />
+            <figure class="taped">
+              <span class="tape tape--tl" aria-hidden="true"></span>
+              <span class="tape tape--br" aria-hidden="true"></span>
+              <img
+                src="images/img_avatar.jpg"
+                alt="Portrait of David Uzor"
+                width="200"
+                height="240"
+              />
+            </figure>
 
-    <section style="max-width: 960px; margin: 2rem auto; padding: 0 1.5rem;">
-      <h3>Experience</h3>
-      <dl style="grid-template-columns: 220px 1fr; row-gap: 0.75rem; column-gap: 1rem;">
-        <dt><strong>July 2025 – August 2025</strong></dt>
-        <dd>
-          Geometry Research Intern at MIT in Cambridge, MA. Simulated the
-          geometric locomotion of a snake robot using a computational framework
-          built on first-order optimization over shape change. Implemented
-          obstacle avoidance by modeling barriers as implicit functions, letting
-          the robot reconfigure its gaits and hold safe trajectories in complex
-          environments, and simulated joint failures to show that locomotion
-          survives mechanical constraints.
-        </dd>
+            <div class="cover__foot">
+              <h2 class="cover__name">David Uzor</h2>
+              <p class="cover__tagline">
+                Software engineer that loves building things.
+              </p>
+            </div>
 
-        <dt><strong>August 2024 – June 2025</strong></dt>
-        <dd>
-          Software Engineer at <a href="https://crescuts.com">CresCuts</a>
-          in Athens, GA. Developed Cres, the booking and automation platform
-          for service-based businesses. Built the core booking and scheduling
-          logic in Java and Spring, developed a responsive frontend in
-          SvelteKit and TypeScript, and deployed and maintained containerized
-          applications on AWS with Docker following best practices for
-          scalability and performance.
-        </dd>
+            <div class="page__gloss" aria-hidden="true"></div>
+            <button class="corner corner--fwd" type="button" data-turn="next">
+              <span class="sr-only">Open the book</span>
+            </button>
+          </section>
 
-        <dt><strong>March 2024 – June 2024</strong></dt>
-        <dd>
-          Software Engineering Intern at Tatum Games in Santa Clarita, CA
-          (remote). Contributed to MIKROS, a tool that enhances mobile game
-          analytics for developers, implementing new features in JavaScript
-          that increased user engagement by 20%. Took part in code reviews and
-          worked in two-week Agile sprints, completing 100% of assigned tasks.
-        </dd>
-      </dl>
-    </section>
+          <section class="face face--back page" id="contents">
+            <div class="page__grain" aria-hidden="true"></div>
+            <div class="page__body">
+              <p class="running">David Uzor</p>
+              <h2 class="page__title">Contents</h2>
 
-    <hr />
+              <ol class="toc">
+                <li>
+                  <button type="button" data-goto="1">
+                    <span class="toc__label">Education &amp; Skills</span>
+                    <span class="toc__dots" aria-hidden="true"></span>
+                    <span class="toc__folio">1</span>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-goto="2">
+                    <span class="toc__label">Experience</span>
+                    <span class="toc__dots" aria-hidden="true"></span>
+                    <span class="toc__folio">2</span>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-goto="3">
+                    <span class="toc__label">Projects</span>
+                    <span class="toc__dots" aria-hidden="true"></span>
+                    <span class="toc__folio">4</span>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-goto="4">
+                    <span class="toc__label">Contact</span>
+                    <span class="toc__dots" aria-hidden="true"></span>
+                    <span class="toc__folio">6</span>
+                  </button>
+                </li>
+              </ol>
 
-    <section style="max-width: 960px; margin: 2rem auto; padding: 0 1.5rem;">
-      <h3>Projects</h3>
-      <div class="three-col">
-        <div class="card">
-          <img src="images/project-crescuts.png" alt="Cres booking platform screenshot" style="width: 100%; height: 160px; object-fit: cover;" />
-          <h3 style="margin: 0.75rem 1rem 0.25rem;">Cres Booking Platform</h3>
-          <ul style="margin: 0 1rem 1rem; padding-left: 1.1rem;">
-            <li>Java + Spring booking logic</li>
-            <li>SvelteKit + TypeScript frontend</li>
-            <li>Deployed on AWS with Docker</li>
-          </ul>
-        </div>
-        <div class="card">
-          <img src="images/project-mikros.png" alt="MIKROS analytics tool screenshot" style="width: 100%; height: 160px; object-fit: cover;" />
-          <h3 style="margin: 0.75rem 1rem 0.25rem;">MIKROS Game Analytics</h3>
-          <ul style="margin: 0 1rem 1rem; padding-left: 1.1rem;">
-            <li>JavaScript features shipped</li>
-            <li>+20% user engagement</li>
-            <li>Agile sprints, full task completion</li>
-          </ul>
-        </div>
-        <div class="card">
-          <img src="images/project-snake-robot.png" alt="Snake robot simulation screenshot" style="width: 100%; height: 160px; object-fit: cover;" />
-          <h3 style="margin: 0.75rem 1rem 0.25rem;">Snake Robot Simulation</h3>
-          <ul style="margin: 0 1rem 1rem; padding-left: 1.1rem;">
-            <li>First-order shape optimization</li>
-            <li>Implicit-function obstacles</li>
-            <li>Robust to joint failures</li>
-          </ul>
-        </div>
+              <div class="imprint">
+                <p class="imprint__line">210 S. Jackson St, Athens, GA 30602</p>
+                <p class="imprint__line">(706) 254-5344</p>
+                <p class="imprint__line">
+                  <a href="mailto:duzor144@gmail.com">duzor144@gmail.com</a>
+                </p>
+              </div>
+
+              <p class="folio folio--verso">i</p>
+            </div>
+            <div class="page__gutter" aria-hidden="true"></div>
+            <div class="page__gloss" aria-hidden="true"></div>
+            <button class="corner corner--back" type="button" data-turn="prev">
+              <span class="sr-only">Close the book</span>
+            </button>
+          </section>
+        </article>
+
+        <!-- ============ LEAF 1 : education+skills / experience I ============ -->
+        <article class="leaf" data-leaf="1">
+          <section class="face face--front page" id="education">
+            <div class="page__grain" aria-hidden="true"></div>
+            <div class="page__body">
+              <p class="running">Education &amp; Skills</p>
+
+              <h2 class="page__title">Education</h2>
+              <dl class="entry">
+                <dt>University of Georgia</dt>
+                <dd>
+                  Bachelor of Science in Computer Science &middot; Expected May
+                  2027 &middot; GPA 3.56
+                </dd>
+                <dt>Relevant Coursework</dt>
+                <dd>
+                  Data Structures, Algorithms, Operating Systems, Databases, Web
+                  Programming, Computer Networks, Linear Algebra
+                </dd>
+              </dl>
+
+              <h2 class="page__title page__title--mid" id="skills">Skills</h2>
+              <ul class="ruled">
+                <li>Java and the Spring Framework</li>
+                <li>TypeScript, JavaScript, Svelte/SvelteKit, and React</li>
+                <li>HTML and CSS</li>
+                <li>Python, C, C#/.NET, Rust, and Kotlin</li>
+                <li>Git, GitHub, Docker, and AWS (VPC, EC2, ECS, S3)</li>
+                <li>Blender (3D graphics software)</li>
+              </ul>
+
+              <p class="folio folio--recto">1</p>
+            </div>
+            <div class="page__gutter" aria-hidden="true"></div>
+            <div class="page__gloss" aria-hidden="true"></div>
+            <button class="corner corner--fwd" type="button" data-turn="next">
+              <span class="sr-only">Next page</span>
+            </button>
+          </section>
+
+          <section class="face face--back page" id="experience">
+            <div class="page__grain" aria-hidden="true"></div>
+            <div class="page__body">
+              <p class="running">Experience</p>
+              <h2 class="page__title">Experience</h2>
+
+              <article class="post">
+                <p class="post__when">July 2025 &ndash; August 2025</p>
+                <h3 class="post__what">Geometry Research Intern</h3>
+                <p class="post__where">MIT &middot; Cambridge, MA</p>
+                <p class="post__text">
+                  Simulated the geometric locomotion of a snake robot using a
+                  computational framework built on first-order optimization over
+                  shape change. Implemented obstacle avoidance by modeling
+                  barriers as implicit functions, letting the robot reconfigure
+                  its gaits and hold safe trajectories in complex environments,
+                  and simulated joint failures to show that locomotion survives
+                  mechanical constraints.
+                </p>
+              </article>
+
+              <p class="folio folio--verso">2</p>
+            </div>
+            <div class="page__gutter" aria-hidden="true"></div>
+            <div class="page__gloss" aria-hidden="true"></div>
+            <button class="corner corner--back" type="button" data-turn="prev">
+              <span class="sr-only">Previous page</span>
+            </button>
+          </section>
+        </article>
+
+        <!-- ============ LEAF 2 : experience II / projects I ============ -->
+        <article class="leaf" data-leaf="2">
+          <section class="face face--front page">
+            <div class="page__grain" aria-hidden="true"></div>
+            <div class="page__body">
+              <p class="running">Experience</p>
+
+              <article class="post">
+                <p class="post__when">August 2024 &ndash; June 2025</p>
+                <h3 class="post__what">Software Engineer</h3>
+                <p class="post__where">
+                  <a href="https://crescuts.com">CresCuts</a> &middot; Athens, GA
+                </p>
+                <p class="post__text">
+                  Developed Cres, the booking and automation platform for
+                  service-based businesses. Built the core booking and
+                  scheduling logic in Java and Spring, developed a responsive
+                  frontend in SvelteKit and TypeScript, and deployed and
+                  maintained containerized applications on AWS with Docker
+                  following best practices for scalability and performance.
+                </p>
+              </article>
+
+              <article class="post">
+                <p class="post__when">March 2024 &ndash; June 2024</p>
+                <h3 class="post__what">Software Engineering Intern</h3>
+                <p class="post__where">
+                  Tatum Games &middot; Santa Clarita, CA (remote)
+                </p>
+                <p class="post__text">
+                  Contributed to MIKROS, a tool that enhances mobile game
+                  analytics for developers, implementing new features in
+                  JavaScript that increased user engagement by 20%. Took part in
+                  code reviews and worked in two-week Agile sprints, completing
+                  100% of assigned tasks.
+                </p>
+              </article>
+
+              <p class="folio folio--recto">3</p>
+            </div>
+            <div class="page__gutter" aria-hidden="true"></div>
+            <div class="page__gloss" aria-hidden="true"></div>
+            <button class="corner corner--fwd" type="button" data-turn="next">
+              <span class="sr-only">Next page</span>
+            </button>
+          </section>
+
+          <section class="face face--back page" id="projects">
+            <div class="page__grain" aria-hidden="true"></div>
+            <div class="page__body">
+              <p class="running">Projects</p>
+              <h2 class="page__title">Projects</h2>
+
+              <figure class="plate plate--tall">
+                <span class="tape tape--tl" aria-hidden="true"></span>
+                <span class="tape tape--br" aria-hidden="true"></span>
+                <img
+                  src="images/project-crescuts.png"
+                  alt="Cres booking platform screenshot"
+                  loading="lazy"
+                />
+                <figcaption>
+                  <h3>Cres Booking Platform</h3>
+                  <ul>
+                    <li>Java + Spring booking logic</li>
+                    <li>SvelteKit + TypeScript frontend</li>
+                    <li>Deployed on AWS with Docker</li>
+                  </ul>
+                </figcaption>
+              </figure>
+
+              <p class="folio folio--verso">4</p>
+            </div>
+            <div class="page__gutter" aria-hidden="true"></div>
+            <div class="page__gloss" aria-hidden="true"></div>
+            <button class="corner corner--back" type="button" data-turn="prev">
+              <span class="sr-only">Previous page</span>
+            </button>
+          </section>
+        </article>
+
+        <!-- ============ LEAF 3 : projects II / contact ============ -->
+        <article class="leaf" data-leaf="3">
+          <section class="face face--front page">
+            <div class="page__grain" aria-hidden="true"></div>
+            <div class="page__body">
+              <p class="running">Projects</p>
+
+              <figure class="plate">
+                <span class="tape tape--tl" aria-hidden="true"></span>
+                <span class="tape tape--br" aria-hidden="true"></span>
+                <img
+                  src="images/project-mikros.png"
+                  alt="MIKROS analytics tool screenshot"
+                  loading="lazy"
+                />
+                <figcaption>
+                  <h3>MIKROS Game Analytics</h3>
+                  <ul>
+                    <li>JavaScript features shipped</li>
+                    <li>+20% user engagement</li>
+                    <li>Agile sprints, full task completion</li>
+                  </ul>
+                </figcaption>
+              </figure>
+
+              <figure class="plate">
+                <span class="tape tape--tl" aria-hidden="true"></span>
+                <span class="tape tape--br" aria-hidden="true"></span>
+                <img
+                  src="images/project-snake-robot.png"
+                  alt="Snake robot simulation screenshot"
+                  loading="lazy"
+                />
+                <figcaption>
+                  <h3>Snake Robot Simulation</h3>
+                  <ul>
+                    <li>First-order shape optimization</li>
+                    <li>Implicit-function obstacles</li>
+                    <li>Robust to joint failures</li>
+                  </ul>
+                </figcaption>
+              </figure>
+
+              <p class="folio folio--recto">5</p>
+            </div>
+            <div class="page__gutter" aria-hidden="true"></div>
+            <div class="page__gloss" aria-hidden="true"></div>
+            <button class="corner corner--fwd" type="button" data-turn="next">
+              <span class="sr-only">Next page</span>
+            </button>
+          </section>
+
+          <section class="face face--back page" id="contact">
+            <div class="page__grain" aria-hidden="true"></div>
+            <div class="page__body">
+              <p class="running">Contact</p>
+              <h2 class="page__title">Get in Touch</h2>
+              <p class="lede">
+                Send a message and I&rsquo;ll get back to you as soon as I can.
+              </p>
+
+              <form class="sheet" id="contact-form" action="#" method="post">
+                <p class="field">
+                  <label for="name">Name</label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="Your full name"
+                  />
+                </p>
+                <p class="field">
+                  <label for="email">Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="you@example.com"
+                  />
+                </p>
+                <p class="field">
+                  <label for="message">Message</label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows="5"
+                    placeholder="What's on your mind?"
+                  ></textarea>
+                </p>
+                <button class="btn" type="submit">Send</button>
+                <output class="form-note" id="form-note" aria-live="polite"
+                ></output>
+              </form>
+
+              <p class="folio folio--verso">6</p>
+            </div>
+            <div class="page__gutter" aria-hidden="true"></div>
+            <div class="page__gloss" aria-hidden="true"></div>
+            <button class="corner corner--back" type="button" data-turn="prev">
+              <span class="sr-only">Previous page</span>
+            </button>
+          </section>
+        </article>
+
+        <!-- ============ LEAF 4 : the blank sheet ============
+             Left deliberately empty — this is the page to draw on. Its back
+             is the rear board, which the reader never reaches: book.js stops
+             one leaf short so the book always ends on this spread. -->
+        <article class="leaf" data-leaf="4">
+          <section class="face face--front page" id="drawing">
+            <div class="page__grain" aria-hidden="true"></div>
+            <div class="page__body">
+              <p class="folio folio--recto">7</p>
+            </div>
+            <div class="page__gutter" aria-hidden="true"></div>
+            <div class="page__gloss" aria-hidden="true"></div>
+          </section>
+
+          <section class="face face--back page page--board" aria-hidden="true">
+            <div class="page__gloss" aria-hidden="true"></div>
+          </section>
+        </article>
       </div>
-    </section>
+    </main>
 
-    <hr />
+    <div class="tool">
+      <button class="pen" id="pen-toggle" type="button" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M3 21c0-4 1.5-6 4-8.5L17.2 2.3a2 2 0 0 1 2.8 2.8L9.5 17C7 19.5 5 21 3 21Z"
+          />
+        </svg>
+        <span class="sr-only">Toggle the pen</span>
+      </button>
+      <span class="tool__label">Draw something!</span>
+    </div>
 
-    <footer>
-      <span>© 2026 David Uzor · Built with HTML and CSS</span>
-    </footer>
+    <script src="js/ink.js"></script>
+    <script src="js/book.js"></script>
   </body>
 </html>

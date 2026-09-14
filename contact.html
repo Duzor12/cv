@@ -3,66 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- The contact page is now a leaf of the book. Anything still linking
+         here gets sent to that spread. -->
+    <meta http-equiv="refresh" content="0; url=index.html#contact" />
+    <link rel="canonical" href="index.html" />
     <link rel="stylesheet" href="css/style.css" />
     <title>Contact David Uzor</title>
   </head>
   <body>
-    <nav>
-      <span class="nav-name">David Uzor</span>
-      <a href="index.html">About David</a>
-    </nav>
-
-    <header>
-      <h1>Get in Touch</h1>
-      <img src="images/img_avatar.jpg" alt="Portrait of David Uzor" style="width: 140px; height: 140px; object-fit: cover;" />
-      <p class="address" style="font-size: 0.95rem; margin-top: 1rem; letter-spacing: 0.02em;">
-        <span>📍 210 S. Jackson St, Athens, GA 30602</span>
-        <span>📞 (706) 254-5344</span>
-        <span>✉️ duzor144@gmail.com</span>
+    <main class="stage">
+      <p style="color: #c9a349; font-size: 0.9rem; letter-spacing: 0.1em">
+        Turning to the contact page&hellip;
+        <a href="index.html#contact" style="color: #f3e9d6">open the book</a>
       </p>
-      <p class="tagline" style="font-size: 1.15rem; font-style: italic; margin-top: 0.75rem;">
-        Send a message and I'll get back to you as soon as I can.
-      </p>
-    </header>
-
-    <section style="max-width: 640px; margin: 2rem auto; padding: 0 1.5rem;">
-      <h3>Contact Form</h3>
-      <form class="one-col" action="#" method="post">
-        <label for="name">Name:</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          placeholder="Your full name"
-          style="padding: 0.6rem; border: 1px solid #3e8ed0; border-radius: 4px;"
-        />
-
-        <label for="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          placeholder="you@example.com"
-          style="padding: 0.6rem; border: 1px solid #3e8ed0; border-radius: 4px;"
-        />
-
-        <label for="message">Message:</label>
-        <textarea
-          id="message"
-          name="message"
-          rows="6"
-          placeholder="What's on your mind?"
-          style="padding: 0.6rem; border: 1px solid #3e8ed0; border-radius: 4px; font-family: inherit;"
-        ></textarea>
-
-        <button type="submit" style="padding: 0.7rem 1.4rem; background-color: #3e8ed0; color: #fff; border: none; border-radius: 4px; cursor: pointer;">
-          Send
-        </button>
-      </form>
-    </section>
-
-    <footer>
-      <span>© 2026 David Uzor · Built with HTML and CSS</span>
-    </footer>
+    </main>
+    <script>
+      location.replace("index.html#contact");
+    </script>
   </body>
 </html>

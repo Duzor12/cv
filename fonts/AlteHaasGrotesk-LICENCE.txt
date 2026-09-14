@@ -1,0 +1,16 @@
+Alte Haas Grotesk is a typeface that look like an helvetica printed in an old
+Muller-Brockmann Book.
+
+These fonts are freeware and can be distributed as long as they are
+together with this text file.
+
+I would appreciate very much to see what you have done with it anyway.
+
+yann le coroller
+www.yannlecoroller.com
+yann@lecoroller.com
+
+---
+Note: the .woff2 files in this folder are format conversions of the original
+AlteHaasGroteskRegular.ttf and AlteHaasGroteskBold.ttf for web use. The
+typeface and this licence are unchanged.

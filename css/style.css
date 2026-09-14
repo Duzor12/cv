@@ -1,221 +1,1071 @@
-/* Google Fonts (via @import so the inline-css test runner can fetch them) */
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600;700&display=swap");
+/* ==========================================================================
+   David Uzor — CV, bound as a book.
+   Display: Babel Sans Bold. Text: Alte Haas Grotesk. Both self-hosted.
+   ========================================================================== */
+
+@font-face {
+  font-family: "Alte Haas Grotesk";
+  src: url("../fonts/AlteHaasGrotesk-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Alte Haas Grotesk";
+  src: url("../fonts/AlteHaasGrotesk-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* only the bold weight of Babel Sans exists, so it is display-only */
+@font-face {
+  font-family: "Babel Sans";
+  src: url("../fonts/BabelSans-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --------------------------------------------------------------------------
+   Tokens
+   -------------------------------------------------------------------------- */
+:root {
+  --ph: clamp(380px, min(80vh, calc(39vw * 1.4)), 700px);
+  --pw: calc(var(--ph) / 1.4);
+
+  --bg: #ffffff;
+  --board: #282828;
+  --paper: #f1ebdf;
+  --paper-2: #e2dbca;
+  --ink: #141414;
+  --ink-2: #4e4a44;
+  --ink-3: #857f72;
+  --rule: rgba(0, 0, 0, 0.15);
+
+  --display: "Babel Sans", "Alte Haas Grotesk", Helvetica, Arial, sans-serif;
+  --text: "Alte Haas Grotesk", Helvetica, Arial, sans-serif;
+
+  --flip: 950ms;
+  --ease: cubic-bezier(0.36, 0.06, 0.18, 1);
+
+  /* fine paper fibre: turbulence lit from the upper left */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeDiffuseLighting lighting-color='%23ffffff' surfaceScale='1.05'%3E%3CfeDistantLight azimuth='45' elevation='60'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)'/%3E%3C/svg%3E");
+
+  /* stretched turbulence — pulp fibres laid in the sheet */
+  --fibre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.011 0.65' numOctaves='3' seed='9' stitchTiles='stitch'/%3E%3CfeDiffuseLighting lighting-color='%23ffffff' surfaceScale='1.5'%3E%3CfeDistantLight azimuth='100' elevation='57'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23f)'/%3E%3C/svg%3E");
+}
+
+/* --------------------------------------------------------------------------
+   Shell
+   -------------------------------------------------------------------------- */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
 
 body {
   margin: 0;
-  font-family: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
-  color: #1f2933;
-  background-color: #f5f7fa;
+  font-family: var(--text);
+  color: var(--ink);
+  background: var(--bg);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.svg-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* centring the book puts the spine on the centre line, so the closed cover
+   fills the right half and turned pages stack out to the left */
+.stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: 3vh 4vw;
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   Book mechanics
+   -------------------------------------------------------------------------- */
+.book {
+  --turned: 0;
+  --total: 4;
+
+  position: relative;
+  z-index: 2;
+  width: calc(var(--pw) * 2);
+  height: var(--ph);
+  perspective: 2800px;
+  perspective-origin: 50% 46%;
+  transform-style: preserve-3d;
+}
+
+/* the thickness of the paper stack on each side */
+.book__edges {
+  position: absolute;
+  top: 1.4%;
+  bottom: 1.4%;
+  width: 7px;
+  z-index: 0;
+  background: repeating-linear-gradient(
+    to right,
+    var(--paper-2) 0 1px,
+    rgba(0, 0, 0, 0.14) 1px 2px
+  );
+  transition: opacity 0.5s ease;
+}
+
+.book__edges--right {
+  right: -6px;
+  opacity: calc((var(--total) - var(--turned)) / var(--total));
+}
+
+.book__edges--left {
+  left: -6px;
+  opacity: calc(var(--turned) / var(--total));
+}
+
+.leaf {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: var(--pw);
+  height: var(--ph);
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transition: transform var(--flip) var(--ease);
+  will-change: transform;
+}
+
+.leaf.is-flipped {
+  transform: rotateY(-180deg);
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  isolation: isolate;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: var(--paper);
+  /* cast outward only — a shadow on the spine side would split the spread
+     into two floating cards instead of one book */
+  box-shadow: 7px 10px 26px rgba(0, 0, 0, 0.13);
+}
+
+/* the verso. Rotated about its own centre, so in local coordinates its LEFT
+   edge lands at the outer edge of the book and its RIGHT edge at the spine —
+   hence the mirrored padding and shadows below. */
+.face--back {
+  transform: rotateY(180deg);
+  box-shadow: -7px 10px 26px rgba(0, 0, 0, 0.13);
+}
+
+/* --------------------------------------------------------------------------
+   Paper
+   -------------------------------------------------------------------------- */
+.page__grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: var(--grain), var(--fibre);
+  background-size: 240px, 300px;
+  mix-blend-mode: multiply;
+  opacity: 0.3;
+}
+
+/* the sheet curving down into the binding */
+.page__gutter {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 15%;
+  z-index: 7;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.14) 0%,
+    rgba(0, 0, 0, 0.04) 36%,
+    transparent 100%
+  );
+}
+
+.face--back .page__gutter {
+  left: auto;
+  right: 0;
+  background: linear-gradient(
+    to left,
+    rgba(0, 0, 0, 0.14) 0%,
+    rgba(0, 0, 0, 0.04) 36%,
+    transparent 100%
+  );
+}
+
+/* light raking across the sheet as it turns — this is what sells the bend */
+.page__gloss {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0.8) 0%,
+    rgba(255, 255, 255, 0.1) 34%,
+    rgba(0, 0, 0, 0.06) 68%,
+    rgba(0, 0, 0, 0.24) 100%
+  );
+}
+
+.leaf.is-turning .face--front .page__gloss {
+  animation: sheen-recto var(--flip) var(--ease);
+}
+
+.leaf.is-turning .face--back .page__gloss {
+  animation: sheen-verso var(--flip) var(--ease);
+}
+
+@keyframes sheen-recto {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  42% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes sheen-verso {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  58% {
+    opacity: 0.85;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Corner peel
+   -------------------------------------------------------------------------- */
+.corner {
+  position: absolute;
+  bottom: 0;
+  width: 4.6em;
+  height: 4.6em;
+  z-index: 9;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+}
+
+.corner--fwd {
+  right: 0;
+}
+
+.corner--back {
+  left: 0;
+}
+
+/* book.js gives every face both corners so single-page mode can go either
+   way; on the spread, only the one at the outer edge belongs */
+body:not(.is-single) .face--front .corner--back,
+body:not(.is-single) .face--back .corner--fwd {
+  display: none;
+}
+
+/* shadow the lifted corner throws onto the sheet underneath */
+.corner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.34s ease;
+}
+
+.corner--fwd::after {
+  background: radial-gradient(
+    circle at 100% 100%,
+    rgba(0, 0, 0, 0.28),
+    transparent 68%
+  );
+}
+
+.corner--back::after {
+  background: radial-gradient(
+    circle at 0 100%,
+    rgba(0, 0, 0, 0.28),
+    transparent 68%
+  );
+}
+
+/* the curled triangle — you are looking at the back of the sheet */
+.corner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: scale(0.2);
+  transition: transform 0.36s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.corner--fwd::before {
+  transform-origin: 100% 100%;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  background: linear-gradient(225deg, #fdf9f0 0%, var(--paper) 45%, #cdc4ae 100%);
+  box-shadow: -3px -3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.corner--back::before {
+  transform-origin: 0 100%;
+  clip-path: polygon(0 0, 100% 100%, 0 100%);
+  background: linear-gradient(135deg, #fdf9f0 0%, var(--paper) 45%, #cdc4ae 100%);
+  box-shadow: 3px -3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.corner:hover::before,
+.corner:focus-visible::before {
+  transform: scale(1);
+}
+
+.corner:hover::after,
+.corner:focus-visible::after {
+  opacity: 1;
+}
+
+.corner:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: -2px;
+}
+
+.page--board .corner--fwd::before {
+  background: linear-gradient(225deg, #4c4c4c 0%, #2e2e2e 50%, #161616 100%);
+}
+
+.page--board .corner--back::before {
+  background: linear-gradient(135deg, #4c4c4c 0%, #2e2e2e 50%, #161616 100%);
+}
+
+/* --------------------------------------------------------------------------
+   Page typography
+   -------------------------------------------------------------------------- */
+.page {
+  font-size: calc(var(--ph) / 41);
   line-height: 1.5;
 }
 
-/****************   Nav Section **********************/
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-family: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
-  background-color: #1f2933;
-  padding: 1rem 2rem;
-  border-bottom: 2px solid #3e8ed0;
-}
-
-nav .nav-name {
-  font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: 0.05em;
-  color: #f5f7fa;
-}
-
-nav a {
-  color: #f5a623;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 1rem;
-  transition: color 0.2s ease;
-}
-
-nav a:hover {
-  color: #ffd58a;
-  text-decoration: underline;
-}
-
-/***********************  Footer Section   **************************/
-footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
-  font-size: 0.9rem;
-  background-color: #1f2933;
-  color: #f5f7fa;
-  padding: 1.25rem 2rem;
-  margin-top: 2rem;
-  border-top: 2px solid #3e8ed0;
-}
-
-/*********** Splash Page ************************/
-header {
+.page__body {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
   display: flex;
   flex-direction: column;
+  padding: 2.4em 2.2em 2em 3.4em;
+}
+
+.face--back .page__body {
+  padding: 2.4em 3.4em 2em 2.2em;
+}
+
+.running {
+  margin: 0 0 1.9em;
+  font-size: 0.6em;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.face--back .running {
+  text-align: right;
+}
+
+.page__title {
+  margin: 0 0 0.8em;
+  font-family: var(--display);
+  font-size: 1.72em;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.06;
+}
+
+.page__title--mid {
+  margin-top: 1.2em;
+}
+
+.lede {
+  margin: -0.35em 0 1.5em;
+  font-size: 0.92em;
+  color: var(--ink-2);
+  max-width: 24em;
+}
+
+.folio {
+  margin: auto 0 0;
+  padding-top: 1em;
+  font-size: 0.64em;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--ink-3);
+}
+
+.folio--verso {
+  text-align: left;
+}
+
+.folio--recto {
+  text-align: right;
+}
+
+.page a {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.page a:hover {
+  border-bottom-color: var(--ink);
+}
+
+/* --------------------------------------------------------------------------
+   Cover
+   -------------------------------------------------------------------------- */
+.page--board {
+  background: var(--board);
+  color: #f2f0ec;
+}
+
+.page--cover {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3.4em 2.8em 3.2em;
+  text-align: center;
+}
+
+.cover__kicker {
+  margin: 0;
+  font-size: 0.6em;
+  font-weight: 700;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+  text-transform: uppercase;
+  color: rgba(242, 240, 236, 0.5);
+}
+
+/* the photograph, taped to the board */
+.taped {
+  position: relative;
+  margin: 0;
+  transform: rotate(-1.1deg);
+}
+
+.taped img {
+  display: block;
+  width: 13em;
+  height: 15.4em;
+  object-fit: cover;
+  /* #neutralise corrects the photo's green cast per channel; see the filter
+     definition in index.html */
+  filter: url(#neutralise) contrast(1.04) brightness(1.06);
+}
+
+.tape {
+  position: absolute;
+  z-index: 2;
+  width: 5.4em;
+  height: 1.5em;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(255, 255, 255, 0.34) 40%,
+    rgba(255, 255, 255, 0.16) 100%
+  );
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  filter: url(#torn);
+}
+
+.tape--tl {
+  top: -0.7em;
+  left: -1.9em;
+  transform: rotate(-45deg);
+}
+
+.tape--br {
+  right: -1.9em;
+  bottom: -0.7em;
+  transform: rotate(-45deg);
+}
+
+/* the same tape, but stuck to paper rather than to the black board */
+.plate .tape {
+  width: 3.8em;
+  height: 1.05em;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 253, 248, 0.34) 0%,
+    rgba(255, 253, 248, 0.62) 40%,
+    rgba(255, 253, 248, 0.34) 100%
+  );
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
+}
+
+.plate .tape--tl {
+  top: -0.5em;
+  left: -1.35em;
+}
+
+.plate .tape--br {
+  right: -1.35em;
+  bottom: auto;
+  top: calc(var(--plate-h) - 0.55em);
+}
+
+.cover__foot {
+  width: 100%;
+}
+
+.cover__name {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 2.1em;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  color: #ffffff;
+}
+
+.cover__tagline {
+  margin: 0.72em 0 0;
+  font-size: 0.78em;
+  line-height: 1.5;
+  color: rgba(242, 240, 236, 0.58);
+}
+
+/* --------------------------------------------------------------------------
+   Contents
+   -------------------------------------------------------------------------- */
+.toc {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.toc li {
+  border-bottom: 1px solid var(--rule);
+}
+
+.toc button {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+  width: 100%;
+  padding: 0.82em 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.9em;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: padding-left 0.22s ease;
+}
+
+.toc button:hover,
+.toc button:focus-visible {
+  padding-left: 0.5em;
+  outline: none;
+}
+
+.toc__dots {
+  flex: 1;
+  height: 1px;
+  background-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0.32) 0.5px,
+    transparent 0.6px
+  );
+  background-size: 5px 1px;
+  background-repeat: repeat-x;
+  transform: translateY(-0.2em);
+}
+
+.toc__folio {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.imprint {
+  margin-top: 2.4em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--rule);
+}
+
+.imprint__line {
+  margin: 0 0 0.35em;
+  font-size: 0.74em;
+  color: var(--ink-2);
+}
+
+/* --------------------------------------------------------------------------
+   Entries, lists, posts, plates
+   -------------------------------------------------------------------------- */
+.entry {
+  margin: 0;
+}
+
+.entry dt {
+  margin-bottom: 0.2em;
+  font-size: 0.9em;
+  font-weight: 700;
+  letter-spacing: -0.008em;
+}
+
+.entry dd {
+  margin: 0 0 0.95em;
+  font-size: 0.83em;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+.ruled {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ruled li {
+  position: relative;
+  padding: 0.44em 0 0.44em 1.15em;
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.83em;
+}
+
+.ruled li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 1.2em;
+  width: 0.42em;
+  height: 1px;
+  background: var(--ink);
+}
+
+.post {
+  margin: 0 0 1.7em;
+}
+
+.post:last-of-type {
+  margin-bottom: 0;
+}
+
+.post__when {
+  margin: 0 0 0.35em;
+  font-size: 0.62em;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.post__what {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 1.06em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.post__where {
+  margin: 0.14em 0 0.6em;
+  font-size: 0.78em;
+  color: var(--ink-2);
+}
+
+.post__text {
+  margin: 0;
+  font-size: 0.81em;
+  line-height: 1.62;
+  color: var(--ink-2);
+  hyphens: auto;
+}
+
+.plate {
+  --plate-h: 8.4em;
+  position: relative;
+  margin: 0 0 1.35em;
+}
+
+.plate:last-of-type {
+  margin-bottom: 0;
+}
+
+.plate--tall {
+  --plate-h: 18em;
+}
+
+.plate img {
+  display: block;
+  width: 100%;
+  height: var(--plate-h);
+  object-fit: cover;
+  filter: contrast(1.02) saturate(1.02);
+}
+
+/* settle the print onto the sheet — just the paper's own grain, so a photo
+   reads as taped down rather than floating over the page */
+.plate::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--plate-h);
+  background-color: rgba(241, 235, 223, 0.22);
+  background-image: var(--grain);
+  background-size: 240px;
+  opacity: 0.22;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.plate figcaption h3 {
+  margin: 0.6em 0 0.3em;
+  font-family: var(--display);
+  font-size: 0.94em;
+  font-weight: 700;
+  letter-spacing: -0.018em;
+}
+
+.plate figcaption ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.74em;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+.plate figcaption li::before {
+  content: "— ";
+  color: var(--ink-3);
+}
+
+/* --------------------------------------------------------------------------
+   Contact form
+   -------------------------------------------------------------------------- */
+.sheet {
+  margin: 0;
+}
+
+.field {
+  margin: 0 0 0.85em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.28em;
+}
+
+.field label {
+  font-size: 0.62em;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.field input,
+.field textarea {
+  font: inherit;
+  font-size: 0.83em;
+  color: var(--ink);
+  padding: 0.42em 0.1em;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  border-radius: 0;
+  resize: none;
+  transition: border-color 0.2s ease;
+}
+
+.field textarea {
+  line-height: 1.55;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--ink-3);
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-bottom-color: var(--ink);
+}
+
+.btn {
+  margin-top: 0.4em;
+  padding: 0.68em 1.7em;
+  font: inherit;
+  font-size: 0.7em;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--ink);
+  border: 0;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.btn:hover {
+  opacity: 0.78;
+}
+
+.form-note {
+  display: block;
+  margin-top: 0.9em;
+  font-size: 0.72em;
+  line-height: 1.5;
+  color: var(--ink-2);
+  min-height: 1.2em;
+}
+
+/* --------------------------------------------------------------------------
+   Ink layer — the canvas you draw on
+   -------------------------------------------------------------------------- */
+.ink-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  touch-action: none;
+}
+
+body.is-drawing .ink-layer {
+  pointer-events: auto;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cpath d='M3 23c0-4 1.6-6.2 4.2-8.8L18 3.4a2.1 2.1 0 0 1 3 3L10.2 17.2C7.6 19.8 5.4 23 3 23Z' fill='%23111111' stroke='%23ffffff' stroke-width='1.4'/%3E%3C/svg%3E")
+      2 24,
+    crosshair;
+}
+
+body.is-drawing .page__body {
+  user-select: none;
+}
+
+/* ink exported once and committed, printed for every visitor */
+.baked-ink {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+/* --------------------------------------------------------------------------
+   The pen — the only chrome on the page
+   -------------------------------------------------------------------------- */
+.topnote {
+  position: fixed;
+  top: 1.7rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  margin: 0;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  pointer-events: none;
+}
+
+.tool {
+  position: fixed;
+  left: 2.2rem;
+  bottom: 2.2rem;
+  z-index: 60;
+  display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: linear-gradient(135deg, #3e8ed0 0%, #1f6fb0 100%);
-  color: #ffffff;
-  padding: 3rem 2rem;
-  text-align: center;
-  border-bottom: 4px solid #f5a623;
 }
 
-header h1 {
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: 3rem;
-  margin: 0 0 0.5rem 0;
-  color: #ffffff;
-  letter-spacing: 0.03em;
+.tool__label {
+  font-size: 0.82rem;
+  color: var(--ink-2);
+  pointer-events: none;
 }
 
-header img {
-  border: 4px solid #ffffff;
-  border-radius: 50%;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-}
-
-.address {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem;
-  color: #f5f7fa;
-  font-weight: 400;
-}
-
-.tagline {
-  color: #f5f7fa;
-  font-family: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
-}
-
-/************* Sections ********************/
-hr {
-  border: none;
-  border-top: 1px solid #c5cdd6;
-  max-width: 960px;
-  margin: 1rem auto;
-}
-
-section h3 {
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: 1.6rem;
-  color: #3e8ed0;
-  border-bottom: 2px solid #f5a623;
-  padding-bottom: 0.3rem;
-  margin-bottom: 1rem;
-}
-
-section dl {
+.pen {
   display: grid;
-  align-items: start;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
 }
 
-section ul {
-  font-size: 1rem;
-  color: #1f2933;
+.pen svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: currentColor;
 }
 
-section a {
-  color: #3e8ed0;
-  text-decoration: none;
-  font-weight: 600;
+.pen:hover {
+  background: rgba(0, 0, 0, 0.06);
 }
 
-section a:hover {
-  color: #f5a623;
-  text-decoration: underline;
+.pen[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--bg);
 }
 
-/**************   Projects   *****************/
-.three-col {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem;
-  margin-top: 1rem;
+.pen:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 2px;
 }
 
-.card img {
-  display: block;
-  border-bottom: 3px solid #f5a623;
-}
-
-.card {
-  background-color: #ffffff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-}
-
-.card h3 {
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: 1.2rem;
-  color: #1f2933;
-  border-bottom: none;
-  padding-bottom: 0;
-  margin: 0.75rem 1rem 0.25rem;
-}
-
-/**************   Responsiveness   *****************/
-@media (max-width: 680px) {
-  nav {
-    flex-direction: column;
-    gap: 0.5rem;
-    text-align: center;
+/* --------------------------------------------------------------------------
+   Single-page mode — narrow screens get one sheet at a time
+   -------------------------------------------------------------------------- */
+@media (max-width: 880px) {
+  :root {
+    --ph: min(74vh, calc(88vw * 1.4));
+    --pw: calc(var(--ph) / 1.4);
   }
 
-  .three-col {
-    grid-template-columns: 1fr;
+  .stage {
+    justify-content: center;
+    padding: 5vh 4vw 3vh;
   }
 
-  header h1 {
-    font-size: 2.2rem;
+  .tool {
+    left: 1.2rem;
+    bottom: 1.2rem;
   }
 
-  section dl {
-    grid-template-columns: 1fr;
-    row-gap: 0.25rem;
+  .topnote {
+    top: 1rem;
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
   }
 
-  dl dt {
-    margin-top: 0.75rem;
+  .book {
+    width: var(--pw);
+    perspective: none;
   }
+
+  .book__edges--left {
+    display: none;
+  }
+
+  .book__edges--right {
+    opacity: 0.85;
+  }
+
+  .leaf {
+    left: 0;
+    transform: none !important;
+    transform-style: flat;
+  }
+
+  .face {
+    transform: none !important;
+    backface-visibility: visible;
+    -webkit-backface-visibility: visible;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.34s ease, transform 0.44s var(--ease);
+  }
+
+  .face.is-current {
+    z-index: 20;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .face.is-leaving {
+    z-index: 19;
+    opacity: 0;
+    transform: translateX(-12%) rotate(-1.4deg) scale(0.97) !important;
+  }
+
+  .face.is-leaving-back {
+    z-index: 19;
+    opacity: 0;
+    transform: translateX(12%) rotate(1.4deg) scale(0.97) !important;
+  }
+
+  /* both edges are outer edges now */
+  .page__body,
+  .face--back .page__body {
+    padding: 2.2em 2.1em 1.9em;
+  }
+
+  .page__gutter {
+    display: none;
+  }
+
+  .face--back .running {
+    text-align: left;
+  }
+
 }
 
-/**************   Contact Page   *****************/
-.one-col {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  background-color: #ffffff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
+/* --------------------------------------------------------------------------
+   Reduced motion — cross-fade instead of turning pages
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --flip: 1ms;
+  }
 
-input,
-textarea {
-  font-family: inherit;
-  font-size: 1rem;
-  background-color: #ffffff;
-  color: #1f2933;
-}
+  .leaf,
+  .face,
+  .corner::before,
+  .corner::after {
+    transition-duration: 1ms !important;
+  }
 
-input:focus,
-textarea:focus {
-  outline: none;
-  border-color: #f5a623;
-  box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.25);
+  .leaf.is-turning .face--front .page__gloss,
+  .leaf.is-turning .face--back .page__gloss {
+    animation: none;
+  }
 }
