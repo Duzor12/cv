@@ -900,7 +900,7 @@ body.is-drawing .page__body {
    -------------------------------------------------------------------------- */
 .topnote {
   position: fixed;
-  top: 1.7rem;
+  top: max(1.7rem, env(safe-area-inset-top));
   left: 50%;
   transform: translateX(-50%);
   z-index: 60;
@@ -911,12 +911,19 @@ body.is-drawing .page__body {
   text-transform: uppercase;
   color: var(--ink-3);
   pointer-events: none;
+  white-space: nowrap;
+  max-width: calc(100vw - 1.2rem);
+  text-align: center;
+}
+
+.topnote__mob {
+  display: none;
 }
 
 .tool {
   position: fixed;
   left: 2.2rem;
-  bottom: 2.2rem;
+  bottom: max(2.2rem, env(safe-area-inset-bottom));
   z-index: 60;
   display: flex;
   align-items: center;
@@ -977,14 +984,22 @@ body.is-drawing .page__body {
   }
 
   .tool {
-    left: 1.2rem;
-    bottom: 1.2rem;
+    left: max(1.2rem, env(safe-area-inset-left));
+    bottom: max(1.2rem, env(safe-area-inset-bottom));
   }
 
   .topnote {
-    top: 1rem;
+    top: max(1rem, env(safe-area-inset-top));
     font-size: 0.58rem;
     letter-spacing: 0.14em;
+  }
+
+  .topnote__desk {
+    display: none;
+  }
+
+  .topnote__mob {
+    display: inline;
   }
 
   .book {
@@ -1047,6 +1062,114 @@ body.is-drawing .page__body {
     text-align: left;
   }
 
+  /* iOS Safari auto-zooms the viewport when an input is focused and its
+     computed size is below 16px. Pin the contact form's text size so the page
+     does not jump on tap. */
+  .field input,
+  .field textarea {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  /* the contact form stretches a little so the Send button does not crash
+     into the page's bottom edge on narrow phones */
+  .sheet {
+    margin-bottom: 0.4em;
+  }
+
+  /* on narrow phones, the long "Skills" and "Projects" sub-pages have less
+     vertical room — drop the tall plate's height so the caption still fits */
+  .plate--tall {
+    --plate-h: 12em;
+  }
+
+  .plate {
+    --plate-h: 6.4em;
+  }
+
+  /* the cover tagline and small imprint lines are illegible at the mobile
+     base font size — give them their own floor */
+  .cover__tagline {
+    font-size: 0.86em;
+  }
+
+  .imprint__line {
+    font-size: 0.8em;
+  }
+
+  .field label {
+    font-size: 0.68em;
+  }
+
+  /* the corner peel triangle is small on mobile — give it a touch-larger tap
+     area without enlarging the visual peel itself */
+  .corner {
+    width: 5rem;
+    height: 5rem;
+  }
+
+  /* the long-drawn tool label crowds the pen on the smallest phones; keep
+     the icon, lose the text */
+  .tool__label {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Tiny phones — iPhone SE width and below.
+   -------------------------------------------------------------------------- */
+@media (max-width: 420px) {
+  :root {
+    /* lean on the width again so the book has more vertical room for content */
+    --ph: min(82vh, calc(94vw * 1.4));
+    --pw: calc(var(--ph) / 1.4);
+  }
+
+  .stage {
+    padding: 4vh 2vw 2vh;
+  }
+
+  .page__body,
+  .face--back .page__body {
+    padding: 1.8em 1.5em 1.5em;
+  }
+
+  .page__title {
+    font-size: 1.5em;
+  }
+
+  /* drop the kicker-sized line of "Skills" / "Projects" — on a 320px-wide
+     screen, "Education & Skills" pushes the heading off the page */
+  .running {
+    margin-bottom: 1.2em;
+    font-size: 0.56em;
+    letter-spacing: 0.18em;
+  }
+
+  .post__when {
+    font-size: 0.58em;
+  }
+
+  /* cover photo on a 320px-wide screen would otherwise dominate — keep the
+     proportions sensible and reduce the tape overhang */
+  .taped img {
+    width: 10.5em;
+    height: 12.4em;
+  }
+
+  .cover__name {
+    font-size: 1.9em;
+  }
+
+  /* contact form rows stack more tightly so all three fit in a short page */
+  .field {
+    margin-bottom: 0.6em;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 0.86em 1em;
+  }
 }
 
 /* --------------------------------------------------------------------------

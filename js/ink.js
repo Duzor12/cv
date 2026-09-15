@@ -28,7 +28,7 @@ window.Ink = (function () {
     coreAlpha: 0.62, // the line itself wants to be crisp and dark...
     wickAlpha: 0.017, // ...and everything around it barely there
     wickSpread: 1.75, // satellite radius, as a multiple of core radius
-    settleMs: 900,
+    settleMs: 9,
     settleWaves: 10,
     settleAlpha: 0.007,
     settleSpread: 1.85,
