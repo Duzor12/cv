@@ -124,6 +124,16 @@ body {
   transform-style: preserve-3d;
 }
 
+/* On the spread every leaf has a unique z-index from restack(), so the right
+   leaf wins the hit test. In single-page mode (under 880px) every face fills
+   the same area and stacks face-on-face, so an older leaf with a higher
+   z-index — leaf[0] sits at z=5 while leaves 1..4 sit at z=4..1 — would
+   catch taps at the corner before the current face does. Make every leaf
+   hit-transparent except the one that owns the visible face. */
+.is-single .leaf:not(:has(.face.is-current)) {
+  pointer-events: none;
+}
+
 /* the thickness of the paper stack on each side */
 .book__edges {
   position: absolute;
